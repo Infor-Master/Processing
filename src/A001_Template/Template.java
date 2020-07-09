@@ -27,6 +27,7 @@ public class Template extends PApplet {
     public void mousePressed(){
         //clear();
         //background(64);
+        background(64);
     }
 
     public static void main(String[] args){
