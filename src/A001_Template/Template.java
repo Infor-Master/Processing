@@ -13,8 +13,8 @@ public class Template extends PApplet {
     // TODO: Your custom drawing and setup on applet start belongs here
     @Override
     public void setup(){
-        this.frameRate(60);
-        this.noStroke();
+        frameRate(60);
+        noStroke();
     }
 
     // TODO: Do your drawing for each frame here
@@ -27,7 +27,7 @@ public class Template extends PApplet {
     public void mousePressed(){
         //clear();
         //background(64);
-        background(64);
+        background(64,64,64,255);
     }
 
     public static void main(String[] args){
