@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 public class Sketch extends PApplet{
 
+    private String filepath;
     private String filename;
     private HashMap<String, String> values;
     private int popSize;
@@ -42,15 +43,16 @@ public class Sketch extends PApplet{
         controlP5.setColorActive(0xffff0000);
         controlP5.setFont(font);
 
-        filename = "src/A005_GAFunctionFinder/Input/Celsius-Fahrenheit.txt";
-        //filename = "src/A005_GAFunctionFinder/Input/Double.txt";
+        filename="Celsius-Fahrenheit";
+        //filename="Double";
+        filepath = "src/A005_GAFunctionFinder/Input/"+filename+".txt";
 
         popSize = 1000;
         values = new HashMap<>();
         frameRate(60);
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            BufferedReader reader = new BufferedReader(new FileReader(filepath));
             String line;
             while ((line = reader.readLine()) != null){
                 String[] smap = line.split(";");
@@ -111,7 +113,7 @@ public class Sketch extends PApplet{
         fill(0);
 
         textSize(16);
-        text("Best function:",20, 30);
+        text("Best function for ["+filename+"]:",20, 30);
         textSize(32);
         text(best, 20, 75);
 
