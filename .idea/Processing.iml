@@ -8,5 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="org.ejml:ejml-all:0.39" level="project" />
+    <orderEntry type="library" name="com.github.sh0nk:matplotlib4j:0.4.0" level="project" />
   </component>
 </module>
