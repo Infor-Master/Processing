@@ -39,13 +39,10 @@ public class Sketch extends PApplet{
         input_nodes = 784;
         hidden_nodes = 200;
         output_nodes = 10;
-        /*input_nodes = 3;
-        hidden_nodes = 20;
-        output_nodes = 3;*/
         learning_rate = (float) 0.01;
         n = new NeuralNetwork(input_nodes, hidden_nodes, output_nodes, learning_rate);
         dataSet = dataPrepare_mnist_train("mnist_train_100.csv");
-
+        dataTrainNN(dataSet, n);
         //n.query(dataSet.get(0).getInputs());
     }
 
@@ -53,17 +50,8 @@ public class Sketch extends PApplet{
     public void draw(){
         if (!mousePressed){
             background(255);
-
-            // Training NN
-            //dataSet = dataPrepare_max3(1000);
-            dataSet = dataPrepare_mnist_train("mnist_train_100.csv");
             dataTrainNN(dataSet, n);
-
             // Preparing Query for NN
-            /*List<Double> inputs = new ArrayList<>();
-            for(int i=0; i<input_nodes; i++){
-                inputs.add(r.nextDouble());
-            }*/
             List<Double> inputs = dataSet.get(pos).getInputs();
             List<Double> target = dataSet.get(pos).getTarget();
             pos++;
@@ -102,7 +90,9 @@ public class Sketch extends PApplet{
             total++;
             text("Score: "+score+"/"+total, 100, 200);
             float ratio = score*100/(float)total;
-            text("%  "+ratio, 100, 225);
+            int erros = total-score;
+            text("Errors:  "+erros, 100, 225);
+            text("%  "+ratio, 100, 250);
 
             //text("inputs:  "+inputs.toString(), 100, 275);
             //text("outputs: "+outputs.toString(), 100, 325);
@@ -162,37 +152,6 @@ public class Sketch extends PApplet{
         return dataSet;
     }
 
-    public List<Data> dataPrepare_max3(int size){
-        List<Data> dataSet = new ArrayList<>();
-        for (int i=0; i<size; i++){
-            List<Double> inputs = new ArrayList<>();
-            List<Double> targets = new ArrayList<>();
-            double max = 0;
-            int correct_label=0;
-            for(int j=0; j<input_nodes; j++){
-                inputs.add(r.nextDouble());
-                if (j==0){
-                    max=inputs.get(0);
-                }else{
-                    if (inputs.get(j)>max){
-                        max=inputs.get(j);
-                        correct_label = j;
-                    }
-                }
-            }
-            for(int j=0; j<output_nodes; j++){
-                if (j==correct_label){
-                    targets.add(0.99);
-                }else{
-                    targets.add(0.01);
-                }
-            }
-            Data data = new Data(inputs, targets);
-            dataSet.add(data);
-        }
-        return dataSet;
-    }
-
     public void dataTrainNN(List<Data> dataSet, NeuralNetwork n){
         for (Data data:dataSet) {
             n.train(data.inputs, data.target);
@@ -219,41 +178,6 @@ public class Sketch extends PApplet{
 
         return (labelI == labelO);
     }
-
-
-    /*public void setupGraphData(){
-        System.out.println(dataMatrix.toString());
-        dataMatrix.set(0,0,1);
-        dataMatrix.set(0,1,2);
-        dataMatrix.set(1,0,9);
-        dataMatrix.set(2,1,12);
-        System.out.println(dataMatrix.toString());
-        System.out.println(dataMatrix.get(0,1));
-        System.out.println(dataMatrix.get(1,0));
-    }
-
-    public void drawGraphData(){
-        int side = 50;
-        for (int i=0; i<lines; i++){
-            for(int j=0; j<columns; j++){
-                float value = map((float) dataMatrix.get(i, j), 0, 20, 0, 16777215);
-                int R = (int)value/(256*256);
-                int G = (int)(value%(256*256))/(256);
-                int B = (int)(value%(256*256))%(256);
-                fill(R,G,B);
-                square(j*side, i*side, side);
-                fill(255);
-                square((j+5)*side, i*side, side);
-            }
-        }
-        for (int i=0; i<lines; i++){
-            for(int j=0; j<columns; j++){
-                textSize(12);
-                fill(0);
-                text((float) dataMatrix.get(i,j), (j+5)*side, (float) ((i+0.5)*side));
-            }
-        }
-    }*/
 
     public static void main(String[] args){
         String[] processingArgs = {"A007_NeuralNetworkExample.Template"};
