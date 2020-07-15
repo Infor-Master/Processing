@@ -2,18 +2,24 @@ package A007_NeuralNetworkExample;
 
 import org.ejml.simple.SimpleMatrix;
 
+import javax.xml.bind.*;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@XmlRootElement
 public class NeuralNetwork {
 
-    int input_nodes;
-    int hidden_nodes;
-    int output_nodes;
-    double learning_rate;
-    SimpleMatrix wih;
-    SimpleMatrix who;
+    private int input_nodes;
+    private int hidden_nodes;
+    private int output_nodes;
+    private double learning_rate;
+    private SimpleMatrix wih;
+    private SimpleMatrix who;
+    private String description = "";
 
     public NeuralNetwork(int inputNodes, int hiddenNodes, int outputNodes, float learningRate){
         input_nodes =inputNodes;
@@ -31,6 +37,8 @@ public class NeuralNetwork {
         //System.out.println(wih.toString());
         //System.out.println(who.toString());
     }
+
+    public NeuralNetwork(){}
 
     public void train(List<Double> inputs_list, List<Double> targets_list){
         SimpleMatrix inputs = new SimpleMatrix(array_list(inputs_list)).transpose();
@@ -103,5 +111,130 @@ public class NeuralNetwork {
 
     private double sigmoid(double x){
         return (1/( 1 + Math.pow(Math.E,(-1*x))));
+    }
+
+    @XmlElement
+    public void setInput_nodes(int input_nodes) {
+        this.input_nodes = input_nodes;
+    }
+
+    @XmlElement
+    public void setHidden_nodes(int hidden_nodes) {
+        this.hidden_nodes = hidden_nodes;
+    }
+
+    @XmlElement
+    public void setOutput_nodes(int output_nodes) {
+        this.output_nodes = output_nodes;
+    }
+
+    @XmlElement
+    public void setLearning_rate(double learning_rate) {
+        this.learning_rate = learning_rate;
+    }
+
+    @XmlElement
+    public void setWih(double[][] dwih) {
+        wih = new SimpleMatrix(dwih);
+    }
+
+    @XmlElement
+    public void setWho(double[][] dwho) {
+        who = new SimpleMatrix(dwho);
+    }
+
+    @XmlElement
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getInput_nodes() {
+        return input_nodes;
+    }
+
+    public int getHidden_nodes() {
+        return hidden_nodes;
+    }
+
+    public int getOutput_nodes() {
+        return output_nodes;
+    }
+
+    public double getLearning_rate() {
+        return learning_rate;
+    }
+
+    public double[][] getWih() {
+        double[][] data = new double[wih.numRows()][wih.numCols()];
+        for (int i=0; i<wih.numRows(); i++){
+            for (int j=0; j<wih.numCols(); j++){
+                data[i][j]=wih.get(i,j);
+            }
+        }
+        return data;
+    }
+
+    public double[][] getWho() {
+        double[][] data = new double[who.numRows()][who.numCols()];
+        for (int i=0; i<who.numRows(); i++){
+            for (int j=0; j<who.numCols(); j++){
+                data[i][j]=who.get(i,j);
+            }
+        }
+        return data;
+    }
+
+    public SimpleMatrix getWihMatrix(){
+        return wih;
+    }
+
+    public SimpleMatrix getWhoMatrix(){
+        return who;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean readXML(String filepath){
+        try {
+            File xmlFile = new File(filepath);
+            JAXBContext jaxbContext = JAXBContext.newInstance(NeuralNetwork.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            NeuralNetwork temp = (NeuralNetwork) jaxbUnmarshaller.unmarshal(xmlFile);
+            this.setInput_nodes(temp.getInput_nodes());
+            this.setHidden_nodes(temp.getHidden_nodes());
+            this.setOutput_nodes(temp.getOutput_nodes());
+            this.setDescription(temp.getDescription());
+            this.setLearning_rate(temp.getLearning_rate());
+            this.wih = temp.wih;
+            this.who = temp.who;
+            return true;
+        } catch (JAXBException ignored) {
+            return false;
+        }
+    }
+
+    public String saveXML(String folderpath){
+        try {
+            String dateTime = java.time.LocalDateTime.now().toString().replace(":", "-");
+            String filename = folderpath+"/NN_"+dateTime+".xml";
+            File file = new File(filename);
+            JAXBContext jaxbContext = JAXBContext.newInstance(NeuralNetwork.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            NeuralNetwork aux = new NeuralNetwork();
+            aux.setInput_nodes(this.getInput_nodes());
+            aux.setHidden_nodes(this.getHidden_nodes());
+            aux.setOutput_nodes(this.getOutput_nodes());
+            aux.setDescription(this.getDescription());
+            aux.setLearning_rate(this.getLearning_rate());
+            aux.wih = this.wih;
+            aux.who = this.who;
+            jaxbMarshaller.marshal(aux, file);
+            return  filename;
+        } catch (JAXBException ignored) {
+            return null;
+        }
     }
 }
